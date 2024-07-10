@@ -5,14 +5,17 @@ import sys
 import cv2
 import freenect
 import numpy as np
+from init_ressources import create_textures, load_objects_texture
 from skimage.io import imsave
 
 WIDTH = 480
 HEIGHT = 640
-BG_IMG = np.ones((WIDTH, HEIGHT), dtype=np.float32)
-FG_IMG = np.zeros((WIDTH, HEIGHT), dtype=np.float32)
-Z_IMG = np.zeros((WIDTH, HEIGHT), dtype=np.float32)
-Z_IMG[:250, :400] = 0.5  # Rectangle mask
+
+# Initialize fossil objects and bg images
+fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
+fossils = load_objects_texture([fossil1] * 10)
+BG_IMG, FG_IMG, Z_IMG = create_textures(fossils, sdbx_width=WIDTH, sdbx_height=HEIGHT)
+
 IID_RGB = 0
 IID_DPT = 0
 MAX_DEPTH = 1000  # Max depth in mm (adapt with the real depth)

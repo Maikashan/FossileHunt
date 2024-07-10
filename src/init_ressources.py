@@ -71,9 +71,7 @@ def overlay_transparent(bg: np.array, overlay: np.array, x: int, y: int) -> np.a
     return bg
 
 
-def load_objects_texture(
-    fossils_dict: list[dict[str, str]], min_depth: int, max_depth: int
-) -> list[Fossil]:
+def load_objects_texture(fossils_dict: list[dict[str, str]]) -> list[Fossil]:
     """Load the objects texture from the objects folder
 
     Args
@@ -111,7 +109,7 @@ def load_objects_texture(
         if size is not None:
             texture = cv2.resize(texture, (size[0], size[1]))
 
-        depth = np.random.randint(min_depth, max_depth)
+        depth = np.random.random()
 
         f = Fossil(name=name, x=-1, y=-1, depth=depth, texture=texture)
         fossils.append(f)
@@ -140,7 +138,7 @@ def create_textures(
     """
 
     init_bg = np.full((sdbx_width, sdbx_height, 3), 255, dtype=np.uint8)
-    depth_bg = np.full((sdbx_width, sdbx_height), -1, dtype=np.int16)
+    depth_bg = np.full((sdbx_width, sdbx_height), -1, dtype=np.float32)
     texture_bg = init_bg.copy()
     for f in fossils:
         theight, twidth = f.texture.shape[:2]
@@ -188,7 +186,7 @@ def create_textures(
 
 if __name__ == "__main__":
     fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
-    fossils = load_objects_texture([fossil1] * 10, min_depth=30, max_depth=90)
+    fossils = load_objects_texture([fossil1] * 10)
     init_bg, texture_bg, depth_bg = create_textures(
         fossils, sdbx_width=1000, sdbx_height=1000
     )
