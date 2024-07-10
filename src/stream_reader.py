@@ -6,10 +6,26 @@ import cv2
 import freenect
 import numpy as np
 from init_ressources import create_textures, load_objects_texture
+from screeninfo import get_monitors
 from skimage.io import imsave
 
-WIDTH = 480
-HEIGHT = 640
+
+def find_projector_screen():
+    monitors = get_monitors()
+    if len(monitors) > 1:
+        for monitor in monitors:
+            if monitor.name.__contains__("HDMI"):
+                return monitor
+    print(
+        "Projector screen not found. Make sure the projector is connected (using built-in display for now)."
+    )
+    return monitors[0]
+
+
+PROJECTOR = find_projector_screen()
+
+WIDTH = PROJECTOR.width
+HEIGHT = PROJECTOR.height
 
 # Initialize fossil objects and bg images
 fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
@@ -29,6 +45,21 @@ def sighandler(signal, frame):
     sys.exit(0)
 
 
+def show_image_on_projector(image, projector, frame_rate=60):
+    window_name = "Projector"
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.moveWindow(window_name, projector.x, projector.y)
+    cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
+    resized_image = cv2.resize(
+        image, (projector.width, projector.height), interpolation=cv2.INTER_AREA
+    )
+
+    cv2.imshow(window_name, resized_image)
+    # Wait to match the frame rate
+    cv2.waitKey(int(1 / frame_rate * 1000))
+
+
 def depth_callback(dev, data, timestamp):
     imsave("test_depth.png", data)
     imsave("FG.png", FG_IMG)
@@ -40,7 +71,7 @@ def depth_callback(dev, data, timestamp):
     new_image[mask_z] = FG_IMG[mask_z]
     new_image[~mask_z] = BG_IMG[~mask_z]
 
-    cv2.imshow("Depth Stream", new_image)
+    show_image_on_projector(new_image, PROJECTOR)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         global running
         running = False
