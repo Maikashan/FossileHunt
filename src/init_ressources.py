@@ -58,13 +58,14 @@ def overlay_transparent(bg: np.array, overlay: np.array, x: int, y: int) -> np.a
     h, w, _ = overlay_color.shape
     roi = bg[y : y + h, x : x + w]
 
+    print(roi.dtype)
+    print(cv2.bitwise_not(mask).dtype)
     # Black-out the area behind the logo in our original ROI
     img1_bg = cv2.bitwise_and(roi, roi, mask=cv2.bitwise_not(mask))
 
     # Mask out the logo from the logo image.
     img2_fg = cv2.bitwise_and(overlay_color, overlay_color, mask=mask)
 
-    print(img1_bg.shape, img2_fg.shape)
     # Update the original image with our new ROI
     bg[y : y + h, x : x + w] = cv2.add(img1_bg, img2_fg)
 
@@ -137,8 +138,8 @@ def create_textures(
         the initial background, the texture background and the depth background
     """
 
-    init_bg = np.full((sdbx_width, sdbx_height, 3), 255, dtype=np.uint8)
-    depth_bg = np.full((sdbx_width, sdbx_height), -1, dtype=np.float32)
+    init_bg = np.full((sdbx_height, sdbx_width, 3), 255, dtype=np.uint8)
+    depth_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.float32)
     texture_bg = init_bg.copy()
     for f in fossils:
         theight, twidth = f.texture.shape[:2]
@@ -185,10 +186,10 @@ def create_textures(
 
 
 if __name__ == "__main__":
-    fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
+    fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.05}
     fossils = load_objects_texture([fossil1] * 10)
     init_bg, texture_bg, depth_bg = create_textures(
-        fossils, sdbx_width=1000, sdbx_height=1000
+        fossils, sdbx_width=480, sdbx_height=640
     )
     cv2.imwrite("init_bg.jpg", init_bg)
     cv2.imwrite("texture_bg.jpg", texture_bg)
