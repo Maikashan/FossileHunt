@@ -58,8 +58,6 @@ def overlay_transparent(bg: np.array, overlay: np.array, x: int, y: int) -> np.a
     h, w, _ = overlay_color.shape
     roi = bg[y : y + h, x : x + w]
 
-    print(roi.dtype)
-    print(cv2.bitwise_not(mask).dtype)
     # Black-out the area behind the logo in our original ROI
     img1_bg = cv2.bitwise_and(roi, roi, mask=cv2.bitwise_not(mask))
 
@@ -182,6 +180,10 @@ def create_textures(
                 break
             randomize_count += 1
 
+    # Swap width and height of each bg
+    init_bg = np.transpose(init_bg, (1, 0, 2))
+    texture_bg = np.transpose(texture_bg, (1, 0, 2))
+    depth_bg = np.transpose(depth_bg)
     return init_bg, texture_bg, depth_bg
 
 

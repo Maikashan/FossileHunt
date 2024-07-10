@@ -15,11 +15,6 @@ HEIGHT = 640
 fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
 fossils = load_objects_texture([fossil1] * 10)
 BG_IMG, FG_IMG, Z_IMG = create_textures(fossils, sdbx_width=WIDTH, sdbx_height=HEIGHT)
-BG_IMG, FG_IMG, Z_IMG = (
-    np.transpose(BG_IMG, (1, 0, 2)),
-    np.transpose(FG_IMG, (1, 0, 2)),
-    np.transpose(Z_IMG),
-)
 
 IID_RGB = 0
 IID_DPT = 0
