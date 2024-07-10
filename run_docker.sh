@@ -1,5 +1,6 @@
 #!/bin/bash
 
+xhost +local:docker
 docker run --rm \
   --net=host \
   -e DISPLAY=$DISPLAY \
