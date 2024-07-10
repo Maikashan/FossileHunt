@@ -1,12 +1,20 @@
 import os
 import signal
 import sys
-
 import freenect
+import cv2
+import numpy as np
 from skimage.io import imsave
 
+WIDTH = 480
+HEIGHT = 640
+BG_IMG = np.ones((WIDTH,HEIGHT),dtype=np.float32)
+FG_IMG = np.zeros((WIDTH,HEIGHT),dtype=np.float32)
+Z_IMG = np.zeros((WIDTH,HEIGHT),dtype=np.float32)
+Z_IMG[:250,:400] = 0.5 # Rectangle mask
 IID_RGB = 0
 IID_DPT = 0
+MAX_DEPTH = 1000 # Max depth in mm (adapt with the real depth)
 running = True
 
 
@@ -22,6 +30,17 @@ def depth_callback(dev, data, timestamp):
     imsave("test_depth.png", data)
     print(data.shape)
     print(data)
+    # normalize data
+    depth_img = np.minimum(data, MAX_DEPTH) / MAX_DEPTH    
+
+    mask_z = Z_IMG <= depth_img
+    depth_img[mask_z] = FG_IMG[mask_z]
+    depth_img[~mask_z] = BG_IMG[~mask_z]
+
+    cv2.imshow("Depth Stream", depth_img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        global running
+        running = False
 
 
 def rgb_callback(dev, data, timestamp):
@@ -29,6 +48,13 @@ def rgb_callback(dev, data, timestamp):
     imsave("test.png", data)
     print(data.shape)
     print(data)
+
+    # Convertir le format d'image de RGB Ã BGR pour OpenCV
+    # rgb_img = cv2.cvtColor(data, cv2.COLOR_RGB2BGR)
+    # cv2.imshow("RGB Stream", rgb_img)
+    # if cv2.waitKey(1) & 0xFF == ord('q'):
+    #     global running
+    #     running = False
 
 
 def main():
@@ -58,7 +84,7 @@ def main():
 
     freenect.set_depth_callback(dev, depth_callback)
     freenect.set_video_callback(dev, rgb_callback)
-    freenect.set_depth_mode(dev, freenect.RESOLUTION_MEDIUM, freenect.DEPTH_MM)
+    freenect.set_depth_mode(dev, freenect.RESOLUTION_MEDIUM , freenect.DEPTH_MM)
     freenect.set_video_mode(dev, freenect.RESOLUTION_MEDIUM, freenect.VIDEO_RGB)
 
     freenect.start_depth(dev)
@@ -73,6 +99,7 @@ def main():
     freenect.stop_video(dev)
     freenect.close_device(dev)
     freenect.shutdown(ctx)
+    cv2.destroyAllWindows()
     print("Done!")
 
 
