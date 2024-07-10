@@ -12,6 +12,7 @@ from skimage.io import imsave
 
 def find_projector_screen():
     monitors = get_monitors()
+    print(monitors)
     if len(monitors) > 1:
         for monitor in monitors:
             if monitor.name.__contains__("HDMI"):
@@ -24,8 +25,8 @@ def find_projector_screen():
 
 PROJECTOR = find_projector_screen()
 
-WIDTH = PROJECTOR.width
-HEIGHT = PROJECTOR.height
+WIDTH = 480  # PROJECTOR.width
+HEIGHT = 640  # PROJECTOR.height
 
 # Initialize fossil objects and bg images
 fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
@@ -34,7 +35,7 @@ BG_IMG, FG_IMG, Z_IMG = create_textures(fossils, sdbx_width=WIDTH, sdbx_height=H
 
 IID_RGB = 0
 IID_DPT = 0
-MAX_DEPTH = 3000  # Max depth in mm (adapt with the real depth)
+MAX_DEPTH = 1000  # Max depth in mm (adapt with the real depth)
 running = True
 
 
