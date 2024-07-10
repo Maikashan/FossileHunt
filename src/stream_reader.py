@@ -1,20 +1,21 @@
 import os
 import signal
 import sys
-import freenect
+
 import cv2
+import freenect
 import numpy as np
 from skimage.io import imsave
 
 WIDTH = 480
 HEIGHT = 640
-BG_IMG = np.ones((WIDTH,HEIGHT),dtype=np.float32)
-FG_IMG = np.zeros((WIDTH,HEIGHT),dtype=np.float32)
-Z_IMG = np.zeros((WIDTH,HEIGHT),dtype=np.float32)
-Z_IMG[:250,:400] = 0.5 # Rectangle mask
+BG_IMG = np.ones((WIDTH, HEIGHT), dtype=np.float32)
+FG_IMG = np.zeros((WIDTH, HEIGHT), dtype=np.float32)
+Z_IMG = np.zeros((WIDTH, HEIGHT), dtype=np.float32)
+Z_IMG[:250, :400] = 0.5  # Rectangle mask
 IID_RGB = 0
 IID_DPT = 0
-MAX_DEPTH = 1000 # Max depth in mm (adapt with the real depth)
+MAX_DEPTH = 1000  # Max depth in mm (adapt with the real depth)
 running = True
 
 
@@ -31,14 +32,14 @@ def depth_callback(dev, data, timestamp):
     print(data.shape)
     print(data)
     # normalize data
-    depth_img = np.minimum(data, MAX_DEPTH) / MAX_DEPTH    
+    depth_img = np.minimum(data, MAX_DEPTH) / MAX_DEPTH
 
     mask_z = Z_IMG <= depth_img
     depth_img[mask_z] = FG_IMG[mask_z]
     depth_img[~mask_z] = BG_IMG[~mask_z]
 
     cv2.imshow("Depth Stream", depth_img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         global running
         running = False
 
@@ -84,7 +85,7 @@ def main():
 
     freenect.set_depth_callback(dev, depth_callback)
     freenect.set_video_callback(dev, rgb_callback)
-    freenect.set_depth_mode(dev, freenect.RESOLUTION_MEDIUM , freenect.DEPTH_MM)
+    freenect.set_depth_mode(dev, freenect.RESOLUTION_MEDIUM, freenect.DEPTH_MM)
     freenect.set_video_mode(dev, freenect.RESOLUTION_MEDIUM, freenect.VIDEO_RGB)
 
     freenect.start_depth(dev)
