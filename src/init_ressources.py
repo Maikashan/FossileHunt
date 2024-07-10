@@ -190,7 +190,7 @@ def create_textures(
 
 if __name__ == "__main__":
     fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
-    fossils = load_objects_texture([fossil1], min_depth=30, max_depth=90)
+    fossils = load_objects_texture([fossil1] * 10, min_depth=30, max_depth=90)
     init_bg, texture_bg, depth_bg = create_textures(
         fossils, sdbx_width=1000, sdbx_height=1000
     )
