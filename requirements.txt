@@ -1,2 +1,11 @@
-numpy==1.26.4
-opencv-python==4.10.0.82
+Cython==3.0.10
+imageio==2.34.2
+lazy_loader==0.4
+networkx==3.3
+numpy==2.0.0
+opencv-python==4.10.0.84
+packaging==24.1
+pillow==10.4.0
+scikit-image==0.24.0
+scipy==1.14.0
+tifffile==2024.7.2
