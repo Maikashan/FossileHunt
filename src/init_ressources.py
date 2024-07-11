@@ -116,6 +116,7 @@ def load_objects_texture(fossils_dict: List[Dict[str, str]]) -> List[Fossil]:
             "path": str,
             "scale_factor": float,      (OPTIONAL)
             "size": tuple[int, int]     (OPTIONAL)
+            "rotation": int             (OPTIONAL)
         }
     min_depth: int
         min depth of each fossil
@@ -143,7 +144,8 @@ def load_objects_texture(fossils_dict: List[Dict[str, str]]) -> List[Fossil]:
         if size is not None:
             texture = cv2.resize(texture, (size[0], size[1]))
 
-        texture = apply_random_rotation(texture)
+        rotation = fossil.get("rotation")
+        texture = apply_random_rotation(texture, angle=rotation)
         depth = np.random.random()
 
         f = Fossil(name=name, x=-1, y=-1, depth=depth, texture=texture)
