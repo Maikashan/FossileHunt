@@ -29,6 +29,39 @@ class Fossil:
         self.texture = texture
 
 
+def apply_random_rotation(texture: np.array, angle: int = None) -> np.array:
+    """
+    Apply a random rotation to the texture
+
+    Args
+    ----
+    texture: np.array
+        the texture to rotate
+    angle: int (OPTIONAL)
+        the angle of the rotation
+
+    Returns
+    -------
+    np.array
+        the rotated texture
+    """
+    angle = angle if angle is not None else random.randint(0, 360)
+    (h, w) = texture.shape[:2]
+    M = cv2.getRotationMatrix2D((w // 2, h // 2), angle, 1)
+    cos_val = np.abs(M[0, 0])
+    sin_val = np.abs(M[0, 1])
+
+    new_w = int((h * sin_val) + (w * cos_val))
+    new_h = int((h * cos_val) + (w * sin_val))
+
+    # Adjust the rotation matrix to take into account the translation
+    M[0, 2] += (new_w / 2) - (w / 2)
+    M[1, 2] += (new_h / 2) - (h / 2)
+
+    rotated_image = cv2.warpAffine(texture, M, (new_w, new_h))
+    return rotated_image
+
+
 def overlay_transparent(bg: np.array, overlay: np.array, x: int, y: int) -> np.array:
     """
     Overlay a transparent image on a background image
@@ -93,11 +126,11 @@ def load_objects_texture(fossils_dict: List[Dict[str, str]]) -> List[Fossil]:
     for fossil in fossils_dict:
         # Load params
         path, name = fossil["path"], fossil["name"]
-        scale_factor = fossil.get("scale_factor", None)
-        size = fossil.get("size")
 
         # Load (and resize) the texture
         texture = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+
+        scale_factor = fossil.get("scale_factor", None)
         if scale_factor is not None:
             texture = cv2.resize(
                 texture,
@@ -106,9 +139,11 @@ def load_objects_texture(fossils_dict: List[Dict[str, str]]) -> List[Fossil]:
                     int(texture.shape[0] * scale_factor),
                 ),
             )
+        size = fossil.get("size")
         if size is not None:
             texture = cv2.resize(texture, (size[0], size[1]))
 
+        texture = apply_random_rotation(texture)
         depth = np.random.random()
 
         f = Fossil(name=name, x=-1, y=-1, depth=depth, texture=texture)
@@ -189,10 +224,14 @@ def create_textures(
 
 
 if __name__ == "__main__":
-    fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.05}
+    fossil1 = {
+        "name": "human_bone",
+        "path": "objects/bone.png",
+        "scale_factor": 0.5,
+    }
     fossils = load_objects_texture([fossil1] * 10)
     init_bg, texture_bg, depth_bg = create_textures(
-        fossils, sdbx_width=480, sdbx_height=640
+        fossils, sdbx_width=2000, sdbx_height=2000
     )
     cv2.imwrite("init_bg.jpg", init_bg)
     cv2.imwrite("texture_bg.jpg", texture_bg)
