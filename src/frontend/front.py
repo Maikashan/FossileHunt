@@ -50,7 +50,13 @@ app.layout = html.Div(
                     'Finir la partie',
                     id='quit-button'
                 ),
-                html.Div(children=0, id='timer', style={'display': 'none'})
+                html.Div(children=0, id='timer', style={'display': 'none'}),
+                html.Div(children=0, id='bone-count', style={'display': 'none'}),
+                html.Button(
+                    id='bone-button',
+                    n_clicks=0,
+                    style={'display': 'none'}
+                ),
                 ],
             style = {'display': 'none'}
             )
@@ -66,22 +72,23 @@ app.layout = html.Div(
         'justify-content': 'center',
         'align-items': 'center',
     }
-    )
+)
 
 @callback(
-        Output('content-start', component_property='style', allow_duplicate=True),
-        Output('content-game', component_property='style', allow_duplicate=True),
-        Output('model-name', 'children'),
-        Output('nb-bone-found', 'children'),
-        Output('time-elapsed', 'children', allow_duplicate=True),
-        Output('timer', 'children', allow_duplicate=True),
-        Input('start-button',  'n_clicks'),
-        State('model-dropdown', 'value'),
-        prevent_initial_call=True
+    Output('content-start', component_property='style', allow_duplicate=True),
+    Output('content-game', component_property='style', allow_duplicate=True),
+    Output('model-name', 'children'),
+    Output('nb-bone-found', 'children', allow_duplicate=True),
+    Output('time-elapsed', 'children', allow_duplicate=True),
+    Output('timer', 'children', allow_duplicate=True),
+    Output('bone-count', 'children', allow_duplicate=True),
+    Input('start-button',  'n_clicks'),
+    State('model-dropdown', 'value'),
+    prevent_initial_call=True
 )
 def start_game(n_clicks, model):
     if n_clicks > 0:
-        return {'display': 'none'}, {'display': 'block'}, f'Modèle : {model}', 'Nombre d\'os trouvé(s) : 0', 'Temps écoulé : 0:00:00', 0
+        return {'display': 'none'}, {'display': 'block'}, f'Modèle : {model}', 'Nombre d\'os trouvé(s) : 0', 'Temps écoulé : 0:00:00', 0, 0
     return no_update
 
 @callback(
@@ -98,16 +105,28 @@ def update_time_elapsed(n_intervals, timer):
     return no_update
 
 @callback(
-        Output('content-game', component_property='style', allow_duplicate=True),
-        Output('content-start', component_property='style', allow_duplicate=True),
-        Input('quit-button',  'n_clicks'),
-        prevent_initial_call=True
+    Output('content-game', component_property='style', allow_duplicate=True),
+    Output('content-start', component_property='style', allow_duplicate=True),
+    Input('quit-button',  'n_clicks'),
+    prevent_initial_call=True
 )
-def restart_game(n_clicks):
+def quit_game(n_clicks):
     if n_clicks > 0:
         return {'display': 'none'}, {'display': 'block'}
     return no_update
 
+@callback(
+    Output('nb-bone-found', 'children', allow_duplicate=True),
+    Output('bone-count', 'children', allow_duplicate=True),
+    Input('bone-button', 'n_clicks'),
+    State('bone-count', 'children'),
+    prevent_initial_call=True
+)
+def update_bone_count(n_clicks, bone_count):
+    if n_clicks > 0:
+        bone_count += 1
+        return f'Nombre d\'os trouvé(s) : {bone_count}', bone_count
+    return no_update
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run_server(debug=False, host="0.0.0.0", port=8050, use_reloader=False, dev_tools_ui=False)
