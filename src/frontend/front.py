@@ -1,6 +1,7 @@
 from dash import Dash, html, dcc, Input, Output, State, callback, no_update
 import datetime
 import os
+import json
 
 
 app = Dash(
@@ -241,28 +242,32 @@ def add_bone_to_list(n_clicks, path, scale, rotation, children):
             "rotation": rotation
         }
         customize_config.append(new_bone)
-        children.append(html.Div(f"{name}, {path}, {scale}"))
+        children.append(html.Div(f"{name}, {path}, {scale}, {rotation}"))
         return children
     return no_update
 
 @callback(
-    Output('dummy-output', 'children'),  # Just a placeholder output
+    Output('dummy-output', 'id'),  # Just a placeholder output
     Input('submit-bone-list', 'n_clicks'),
     State('bone-list', 'children'),
     prevent_initial_call=True
 )
 def submit_bone_list(n_clicks, bones):
     if n_clicks > 0:
-        bone_data = [
-            {
-                "name": bones[i]['props']['children'].split(", ")[0],
-                "path": bones[i]['props']['children'].split(", ")[1],
-                "scale_factor": float(bones[i]['props']['children'].split(", ")[2])
-            } for i in range(len(bones))
-        ]
-        # Send bone_data to backend
-        # For demonstration, we just print it
-        print(json.dumps(bone_data))
+        os.makedirs('assets/configs/custom', exist_ok=True)
+
+        bone_data = []
+        for i in range(len(bones)):
+            split = bones[i]['props']['children'].split(", ")
+        bone_data.append({
+            "name": split[0],
+            "path": split[1],
+            "scale_factor": float(split[2]),
+            "rotation": int(split[3])
+        })
+        f = open('assets/configs/custom/config.json', 'w')
+        f.write(json.dumps(bone_data))
+        f.close()
         return no_update
     return no_update
 
