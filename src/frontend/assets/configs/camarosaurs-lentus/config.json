@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Bassin et pattes arrières",
+        "path": "assets/configs/trilobites/images/bassin-pattes-arriere.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "Colonne",
+        "path": "assets/configs/trilobites/images/colonne.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "Crâne",
+        "path": "assets/configs/trilobites/images/crane.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "Pattes avant",
+        "path": "assets/configs/trilobites/images/pattes-avant.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "Queue",
+        "path": "assets/configs/trilobites/images/queue.png",
+        "scale_factor": 0.05
+    }
+]
