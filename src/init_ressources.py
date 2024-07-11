@@ -137,7 +137,7 @@ def create_textures(
         the initial background, the texture background and the depth background
     """
 
-    init_bg = np.full((sdbx_height, sdbx_width, 3), 255, dtype=np.uint8)
+    init_bg = np.full((sdbx_height, sdbx_width, 3), 0, dtype=np.uint8)
     depth_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.float32)
     texture_bg = init_bg.copy()
     for f in fossils:
@@ -159,7 +159,7 @@ def create_textures(
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
                 ]
-                == 255
+                == 0
             ):
                 f.y = y
                 f.x = x
@@ -189,7 +189,7 @@ def create_textures(
 
 
 if __name__ == "__main__":
-    fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.05}
+    fossil1 = {"name": "human_bone", "path": "../objects/bone.png", "scale_factor": 0.25}
     fossils = load_objects_texture([fossil1] * 10)
     init_bg, texture_bg, depth_bg = create_textures(
         fossils, sdbx_width=480, sdbx_height=640
