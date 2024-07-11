@@ -12,4 +12,4 @@ tifffile==2023.7.10
 screeninfo==0.8.1
 dash==2.17.0
 pandas==2.0.3
-PyQt5==5.15.10
+PyQt6==6.1.0
