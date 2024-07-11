@@ -25,9 +25,53 @@ app.layout = html.Div(
             id='content-start',
             children=[
                 html.Div(
-                    dcc.Dropdown(['test'], 'test', id='model-dropdown', clearable=False),
+                    dcc.Dropdown(['test', 'customize'], 'test', id='model-dropdown', clearable=False),
                     style = {'margin-bottom': '20px'}
                     ),
+                    html.Div(
+            id='content-customize',
+            style = {'display' : 'none'}, 
+            #style={'position': 'fixed', 'top': '50%', 'left': '50%', 'transform': 'translate(-50%, -50%)', 'background': 'white', 'padding': '20px', 'box-shadow': '0px 0px 10px rgba(0,0,0,0.1)'},
+            children=[
+                html.Div(
+                    children=[
+                        html.H4('Customize Bones'),
+                        dcc.Input(
+                            id='bone-name',
+                            type='text',
+                            placeholder='Bone name'
+                        ),
+                        dcc.Input(
+                            id='bone-path',
+                            type='text',
+                            placeholder='Bone image path'
+                        ),
+                        dcc.Input(
+                            id='bone-scale',
+                            type='number',
+                            placeholder='Scale factor'
+                        ),
+                        html.Button(
+                            'Add Bone',
+                            id='add-bone-button',
+                            n_clicks=0
+                        ),
+                        html.Button(
+                            'Close',
+                            id='close-customize-modal',
+                            n_clicks=0
+                        ),
+                        html.Div(id='bone-list', children=[]),
+                        html.Button(
+                            'Submit',
+                            id='submit-bone-list',
+                            n_clicks=0
+                        ),
+                        html.Div(id='dummy-output')
+                    ]
+                )
+            ]
+        ),
                 html.Button(
                     'Commemcer le jeu',
                     id='start-button',
@@ -59,7 +103,9 @@ app.layout = html.Div(
                 ),
                 ],
             style = {'display': 'none'}
-            )
+            ),
+            
+     
         ],
     style={
         'backgroundImage': 'url(/assets/background.png)',
@@ -73,6 +119,19 @@ app.layout = html.Div(
         'align-items': 'center',
     }
 )
+
+@callback(
+        Output('content-customize', component_property='style', allow_duplicate=True),
+        Input('model-dropdown', 'value'),
+        prevent_initial_call=True
+
+)
+def customize_bones(value):
+    if value == 'customize':
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+        
 
 @callback(
     Output('content-start', component_property='style', allow_duplicate=True),
@@ -90,6 +149,7 @@ def start_game(n_clicks, model):
     if n_clicks > 0:
         return {'display': 'none'}, {'display': 'block'}, f'Modèle : {model}', 'Nombre d\'os trouvé(s) : 0', 'Temps écoulé : 0:00:00', 0, 0
     return no_update
+
 
 @callback(
     Output('time-elapsed', 'children', allow_duplicate=True),
