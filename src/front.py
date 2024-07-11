@@ -1,4 +1,5 @@
 from dash import Dash, html, dcc, Input, Output, State, callback, no_update
+from game import Game
 import datetime
 import os
 import json
@@ -14,8 +15,13 @@ app = Dash(
     prevent_initial_callbacks=True
 )
 server = app.server
-
+game = None
 customize_config = []
+model_dict = {
+    'test': 'assets/configs/test/config.json',
+    'tribolites': 'assets/configs/trilobites/config.json',
+    'custom': 'assets/configs/custom/config.json'
+}
 images_dict = {
     'human_bone': 'assets/configs/test/images/bone.png',
     'ArctinurusBoltoni': 'assets/configs/trilobites/images/ArctinurusBoltoni.png',
@@ -45,7 +51,7 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     dcc.Dropdown(
-                        ['test', 'customize'],
+                        ['test', 'custom'],
                         'test',
                         id='model-dropdown',
                         clearable=False
@@ -204,7 +210,7 @@ def reset_config(n_clicks):
     prevent_initial_call=True
 )
 def customize_bones(value):
-    if value == 'customize':
+    if value == 'custom':
         return {'display': 'block'}
     else:
         return {'display': 'none'}
@@ -232,6 +238,7 @@ def add_bone_to_list(n_clicks, path, scale, rotation, children):
         for key, value in images_dict.items():
             if (value == path):
                 name = key
+                break
         if (name is None):
             return no_update
 
@@ -259,12 +266,12 @@ def submit_bone_list(n_clicks, bones):
         bone_data = []
         for i in range(len(bones)):
             split = bones[i]['props']['children'].split(", ")
-        bone_data.append({
-            "name": split[0],
-            "path": split[1],
-            "scale_factor": float(split[2]),
-            "rotation": int(split[3])
-        })
+            bone_data.append({
+                "name": split[0],
+                "path": split[1],
+                "scale_factor": float(split[2]),
+                "rotation": int(split[3])
+            })
         f = open('assets/configs/custom/config.json', 'w')
         f.write(json.dumps(bone_data))
         f.close()
@@ -284,6 +291,24 @@ def submit_bone_list(n_clicks, bones):
 )
 def start_game(n_clicks, model):
     if n_clicks > 0:
+        config_path = None
+        print(f'model : {model}')
+        for key, value in model_dict.items():
+            print(key)
+            if (key == model):
+                print('ok')
+                config_path = value
+                break
+        if (config_path is None):
+            return no_update
+
+        with open(config_path, 'r') as f:
+            fossils_dict = json.load(f)
+
+        global game
+        game = Game(fossils_dict)
+        game.start()
+        game.run()
         return {'display': 'none'}, {'display': 'block'}, f'Modèle : {model}', 'Temps écoulé : 0:00:00', 0
     return no_update
 
@@ -309,6 +334,9 @@ def update_time_elapsed(n_intervals, timer):
 )
 def quit_game(n_clicks):
     if n_clicks > 0:
+        global game
+        game.destroy()
+        game = None
         return {'display': 'none'}, {'display': 'block'}
     return no_update
 
