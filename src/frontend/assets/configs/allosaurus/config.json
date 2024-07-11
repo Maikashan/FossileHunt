@@ -1,0 +1,22 @@
+[
+    {
+        "name": "allosaurus head",
+        "path": "assets/configs/trilobites/images/head.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "allosaurus chest",
+        "path": "assets/configs/trilobites/images/chest.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "allosaurus legs",
+        "path": "assets/configs/trilobites/images/legs.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "allosaurus tail",
+        "path": "assets/configs/trilobites/images/tail.png",
+        "scale_factor": 0.05
+    }
+]
