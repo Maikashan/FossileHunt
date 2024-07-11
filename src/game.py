@@ -38,7 +38,7 @@ class Game:
         self.running = False
         self._init_ctx()
         self._init_ressources(fossils_dict)
-        # self._init_handlers()
+        self._init_handlers()
         self._init_callback()
 
     def _init_ressources(self, fossils_dict):
@@ -64,6 +64,17 @@ class Game:
             print("Failed to open device")
             freenect.shutdown(self.ctx)
             sys.exit(1)
+
+    def _sighandler(self, signal, frame):
+        if signal in (signal.SIGINT, signal.SIGTERM, signal.SIGQUIT):
+            self.running = False
+            self.destroy()
+        sys.exit(0)
+
+    def _init_handlers(self):
+        signal.signal(signal.SIGINT, self._sighandler)
+        signal.signal(signal.SIGTERM, self._sighandler)
+        signal.signal(signal.SIGQUIT, self._sighandler)
 
     def _display(self, image):
         cv2.namedWindow(_WINDOW_NAME, cv2.WINDOW_NORMAL)
