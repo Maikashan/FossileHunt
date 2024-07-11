@@ -1,5 +1,6 @@
 from dash import Dash, html, dcc, Input, Output, State, callback, no_update
 import datetime
+import os
 
 
 app = Dash(
@@ -12,6 +13,22 @@ app = Dash(
     prevent_initial_callbacks=True
 )
 server = app.server
+
+#bones_data = os.path.join(os.getcwd(), 'config.json')
+bones_data = {
+    "os": [
+        {
+            "name": "human_bone",
+            "path": "assets/configs/test/images/bone.png",
+            "scale_factor": 0.05
+        },
+        {
+            "name": "dino_bone",
+            "path": "assets/configs/test/images/dino_bone.png",
+            "scale_factor": 0.1
+        }
+    ]
+}
 
 app.layout = html.Div(
     id='layout',
@@ -36,10 +53,10 @@ app.layout = html.Div(
                 html.Div(
                     children=[
                         html.H4('Customize Bones'),
-                        dcc.Input(
-                            id='bone-name',
-                            type='text',
-                            placeholder='Bone name'
+                        dcc.Dropdown(
+                            id='bone-name-dropdown',
+                            options=[{'label': bone['name'], 'value': bone['name']} for bone in bones_data['os']],
+                            placeholder='Select a bone'
                         ),
                         dcc.Input(
                             id='orientation',
@@ -124,16 +141,66 @@ app.layout = html.Div(
 )
 
 @callback(
-        Output('content-customize', component_property='style', allow_duplicate=True),
-        Input('model-dropdown', 'value'),
-        prevent_initial_call=True
-
+    Output('content-customize', component_property='style', allow_duplicate=True),
+    Input('model-dropdown', 'value'),
+    prevent_initial_call=True
 )
 def customize_bones(value):
     if value == 'customize':
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
+@callback(
+    [Output('bone-path', 'value'), Output('bone-scale', 'value')],
+    Input('bone-name-dropdown', 'value')
+)
+def update_bone_fields(selected_bone_name):
+    if selected_bone_name:
+        bone = next(bone for bone in bones_data['os'] if bone['name'] == selected_bone_name)
+        return bone['path'], bone['scale_factor']
+    return '', 0.5
+
+@callback(
+    Output('bone-list', 'children'),
+    Input('add-bone-button', 'n_clicks'),
+    State('bone-name-dropdown', 'value'),
+    State('bone-path', 'value'),
+    State('bone-scale', 'value'),
+    State('bone-list', 'children'),
+    prevent_initial_call=True
+)
+def add_bone_to_list(n_clicks, name, path, scale, children):
+    if n_clicks > 0:
+        new_bone = {
+            "name": name,
+            "path": path,
+            "scale_factor": scale
+        }
+        children.append(html.Div(f"{name}, {path}, {scale}"))
+        return children
+    return no_update
+
+@callback(
+    Output('dummy-output', 'children'),  # Just a placeholder output
+    Input('submit-bone-list', 'n_clicks'),
+    State('bone-list', 'children'),
+    prevent_initial_call=True
+)
+def submit_bone_list(n_clicks, bones):
+    if n_clicks > 0:
+        bone_data = [
+            {
+                "name": bones[i]['props']['children'].split(", ")[0],
+                "path": bones[i]['props']['children'].split(", ")[1],
+                "scale_factor": float(bones[i]['props']['children'].split(", ")[2])
+            } for i in range(len(bones))
+        ]
+        # Send bone_data to backend
+        # For demonstration, we just print it
+        print(json.dumps(bone_data))
+        return no_update
+    return no_update
         
 
 @callback(
