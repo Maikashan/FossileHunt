@@ -223,17 +223,3 @@ def create_textures(
     texture_bg = np.transpose(texture_bg, (1, 0, 2))
     depth_bg = np.transpose(depth_bg)
     return init_bg, texture_bg, depth_bg
-
-
-# if __name__ == "__main__":
-#     fossil1 = {
-#         "name": "human_bone",
-#         "path": "objects/bone.png",
-#         "scale_factor": 0.5,
-#     }
-#     fossils = load_objects_texture([fossil1] * 10)
-#     init_bg, texture_bg, depth_bg = create_textures(
-#         fossils, sdbx_width=2000, sdbx_height=2000
-#     )
-#     cv2.imwrite("init_bg.jpg", init_bg)
-#     cv2.imwrite("texture_bg.jpg", texture_bg)
