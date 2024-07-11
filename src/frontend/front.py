@@ -42,23 +42,26 @@ app.layout = html.Div(
                             placeholder='Bone name'
                         ),
                         dcc.Input(
-                            id='bone-path',
-                            type='text',
-                            placeholder='Bone image path'
+                            id='orientation',
+                            type='number',
+                            min=0,
+                            max=360,
+                            step=5,
+                            placeholder='Orientation',
+                            value=45
                         ),
                         dcc.Input(
                             id='bone-scale',
                             type='number',
-                            placeholder='Scale factor'
+                            placeholder='Scale factor',
+                            min=0,
+                            max=2,
+                            step=0.05,
+                            value=0.5
                         ),
                         html.Button(
                             'Add Bone',
                             id='add-bone-button',
-                            n_clicks=0
-                        ),
-                        html.Button(
-                            'Close',
-                            id='close-customize-modal',
                             n_clicks=0
                         ),
                         html.Div(id='bone-list', children=[]),
