@@ -4,6 +4,7 @@ import sys
 import cv2
 import freenect
 import numpy as np
+from screeninfo import get_monitors
 
 from init_ressources import create_textures, load_objects_texture
 
@@ -37,7 +38,7 @@ class Game:
         self.running = False
         self._init_ctx()
         self._init_ressources(fossils_dict)
-        self._init_handlers()
+        # self._init_handlers()
         self._init_callback()
 
     def _init_ressources(self, fossils_dict):
@@ -72,16 +73,15 @@ class Game:
             cv2.WND_PROP_FULLSCREEN,
             cv2.WINDOW_FULLSCREEN,
         )
-        resized_i
-        mage = cv2.resize(
+        resized_image = cv2.resize(
             image,
             (_PROJECTOR.width, _PROJECTOR.height),
             interpolation=cv2.INTER_AREA,
         )
-        cv2.imshow(window_name, resized_image)
+        cv2.imshow(_WINDOW_NAME, resized_image)
         cv2.waitKey(int(1 / _FRAME_RATE * 1000))  # wait match fps
 
-    def _depth_callback(dev, data, timestamp):
+    def _depth_callback(self, dev, data, timestamp):
         depth_img = np.minimum(data, _MAX_DEPTH) / _MAX_DEPTH
         mask_z = self.z_img <= depth_img
         new_image = np.zeros((_WIDTH, _HEIGHT, 3), dtype=np.uint8)
@@ -93,10 +93,11 @@ class Game:
 
     def _init_callback(self):
         freenect.set_depth_callback(self.dev, self._depth_callback)
-        freenect.set_depth_mode(dev, freenect.RESOLUTION_MEDIUM, freenect.DEPTH_MM)
+        freenect.set_depth_mode(self.dev, freenect.RESOLUTION_MEDIUM, freenect.DEPTH_MM)
 
     def start(self):
         freenect.start_depth(self.dev)
+        self.running = True
 
     def run(self):
         while self.running:
