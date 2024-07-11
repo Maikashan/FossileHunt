@@ -174,7 +174,7 @@ def create_textures(
         the initial background, the texture background and the depth background
     """
 
-    init_bg = np.full((sdbx_height, sdbx_width, 3), 255, dtype=np.uint8)
+    init_bg = np.full((sdbx_height, sdbx_width, 3), 0, dtype=np.uint8)
     depth_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.float32)
     texture_bg = init_bg.copy()
     for f in fossils:
@@ -196,7 +196,7 @@ def create_textures(
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
                 ]
-                == 255
+                == 0
             ):
                 f.y = y
                 f.x = x
