@@ -119,4 +119,4 @@ class Game:
         freenect.stop_video(self.dev)
         freenect.close_device(self.dev)
         freenect.shutdown(self.ctx)
-        # cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
