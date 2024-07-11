@@ -38,7 +38,7 @@ class Game:
         self.running = False
         self._init_ctx()
         self._init_ressources(fossils_dict)
-        self._init_handlers()
+        # self._init_handlers()
         self._init_callback()
 
     def _init_ressources(self, fossils_dict):
@@ -115,8 +115,8 @@ class Game:
             freenect.process_events(self.ctx)
 
     def destroy(self):
-        freenect.stop_depth(dev)
-        freenect.stop_video(dev)
-        freenect.close_device(dev)
-        freenect.shutdown(ctx)
-        cv2.destroyAllWindows()
+        freenect.stop_depth(self.dev)
+        freenect.stop_video(self.dev)
+        freenect.close_device(self.dev)
+        freenect.shutdown(self.ctx)
+        # cv2.destroyAllWindows()
