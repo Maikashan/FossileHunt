@@ -1,10 +1,7 @@
-{
-        "os":
-        [
-            {
-             "name": "human_bone",
-             "path": "assets/configs/test/images/bone.png",
-             "scale_factor": 0.05
-            }
-        ]
-}
+[
+    {
+        "name": "human_bone",
+        "path": "assets/configs/test/images/bone.png",
+        "scale_factor": 0.05
+    }
+]

@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Arctinurus Boltoni",
+        "path": "assets/configs/trilobites/images/ArctinurusBoltoni.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "Aturia Alabamensis",
+        "path": "assets/configs/trilobites/images/AturiaAlabamensis.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "EurypterusRemipes",
+        "path": "assets/configs/trilobites/images/EurypterusRemipes.png",
+        "scale_factor": 0.05
+    },
+    {
+        "name": "IsoletusMaximus",
+        "path": "assets/configs/trilobites/images/IsoletusMaximus.png",
+        "scale_factor": 0.05
+    }
+]
