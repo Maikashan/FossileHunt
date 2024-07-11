@@ -14,20 +14,13 @@ app = Dash(
 )
 server = app.server
 
-#bones_data = os.path.join(os.getcwd(), 'config.json')
-bones_data = {
-    "os": [
-        {
-            "name": "human_bone",
-            "path": "assets/configs/test/images/bone.png",
-            "scale_factor": 0.05
-        },
-        {
-            "name": "dino_bone",
-            "path": "assets/configs/test/images/dino_bone.png",
-            "scale_factor": 0.1
-        }
-    ]
+customize_config = []
+images_dict = {
+    'human_bone': 'assets/configs/test/images/bone.png',
+    'ArctinurusBoltoni': 'assets/configs/trilobites/images/ArctinurusBoltoni.png',
+    'AturiaAlabamensis': 'assets/configs/trilobites/images/AturiaAlabamensis.png',
+    'EurypterusRemipes': 'assets/configs/trilobites/images/EurypterusRemipes.png',
+    'IsoletusMaximus': 'assets/configs/trilobites/images/IsoletusMaximus.png'
 }
 
 app.layout = html.Div(
@@ -61,53 +54,82 @@ app.layout = html.Div(
                 html.Div(
                     id='content-customize',
                     style = {'display' : 'none'},
-                    #style={'position': 'fixed', 'top': '50%', 'left': '50%', 'transform': 'translate(-50%, -50%)', 'background': 'white', 'padding': '20px', 'box-shadow': '0px 0px 10px rgba(0,0,0,0.1)'},
                     children=[
                         html.Div(
                             children=[
                                 html.H4('Customize Bones'),
-                                dcc.Dropdown(
-                                    id='bone-name-dropdown',
-                                    options=[
-                                        {
-                                            'label': bone['name'],
-                                            'value': bone['name']
-                                         } for bone in bones_data['os']
-                                    ],
-                                    placeholder='Select a bone'
-                                ),
-                                dcc.Input(
-                                    id='orientation',
-                                    type='number',
-                                    min=0,
-                                    max=360,
-                                    step=5,
-                                    placeholder='Orientation',
-                                    value=45
-                                ),
-                                dcc.Input(
-                                    id='bone-scale',
-                                    type='number',
-                                    placeholder='Scale factor',
-                                    min=0,
-                                    max=2,
-                                    step=0.05,
-                                    value=0.5
-                                ),
+                                html.Div(
+                                    children=[
+                                        html.Div(
+                                            children=[
+                                                html.Div('Os selectionne', style={'margin-right': '11px'}),
+                                                dcc.Dropdown(
+                                                    id='bone-name-dropdown',
+                                                    options=[
+                                                        {
+                                                            'label': key,
+                                                            'value': value
+                                                        } for key, value in images_dict.items()
+                                                    ],
+                                                    placeholder='Select a bone',
+                                                    clearable=False,
+                                                    style={'width': '200px'}
+                                                ),
+                                            ],
+                                            style = {'display': 'flex', 'flex-direction': 'row'}
+                                        ),
+                                        html.Div(
+                                            children=[
+                                                html.Div('Rotation de l\'os', style={'margin-right': '5px'}),
+                                                dcc.Input(
+                                                    id='bone-rotation',
+                                                    type='number',
+                                                    min=0,
+                                                    max=360,
+                                                    step=5,
+                                                    placeholder='Orientation',
+                                                    value=45
+                                                ),
+                                            ],
+                                            style = {'display': 'flex', 'flex-direction': 'row'}
+                                        ),
+                                        html.Div(
+                                            children=[
+                                                html.Div('Echelle de l\'os', style={'margin-right': '15px'}),
+                                                dcc.Input(
+                                                    id='bone-scale',
+                                                    type='number',
+                                                    placeholder='Scale factor',
+                                                    min=0,
+                                                    max=2,
+                                                    step=0.05,
+                                                    value=0.5
+                                                ),
+                                            ],
+                                            style = {'display': 'flex', 'flex-direction': 'row'}
+                                        ),
                                 html.Button(
                                     'Add Bone',
                                     id='add-bone-button',
                                     n_clicks=0
                                 ),
-                                html.Div(id='bone-list', children=[]),
+                                html.Div(id='bone-list', children=[], style={'display': 'none'}),
+                                html.Button(
+                                    'Reset config',
+                                    id='reset-bone-button',
+                                    n_clicks=0
+                                ),
                                 html.Button(
                                     'Submit',
                                     id='submit-bone-list',
                                     n_clicks=0
                                 ),
                                 html.Div(id='dummy-output')
-                            ]
-                        )
+                                    ],
+                                    style={'display': 'flex', 'flex-direction': 'column'}
+                                ),
+                            ],
+                        ),
                     ]
                 ),
                 html.Button(
@@ -164,6 +186,18 @@ app.layout = html.Div(
 )
 
 @callback(
+    Output('bone-list', 'children', allow_duplicate=True),
+    Input('reset-bone-button', 'n_clicks'),
+    prevent_initial_call=True
+)
+def reset_config(n_clicks):
+    if n_clicks > 0:
+        customize_config = []
+        return html.Div()
+    return no_update
+
+
+@callback(
     Output('content-customize', component_property='style', allow_duplicate=True),
     Input('model-dropdown', 'value'),
     prevent_initial_call=True
@@ -175,31 +209,38 @@ def customize_bones(value):
         return {'display': 'none'}
 
 @callback(
-    [Output('bone-path', 'value'), Output('bone-scale', 'value')],
+    Output('bone-rotation', 'value'),
+    Output('bone-scale', 'value'),
     Input('bone-name-dropdown', 'value')
 )
 def update_bone_fields(selected_bone_name):
-    if selected_bone_name:
-        bone = next(bone for bone in bones_data['os'] if bone['name'] == selected_bone_name)
-        return bone['path'], bone['scale_factor']
-    return '', 0.5
+    return 5, 0.5
 
 @callback(
-    Output('bone-list', 'children'),
+    Output('bone-list', 'children', allow_duplicate=True),
     Input('add-bone-button', 'n_clicks'),
     State('bone-name-dropdown', 'value'),
-    State('bone-path', 'value'),
     State('bone-scale', 'value'),
+    State('bone-rotation', 'value'),
     State('bone-list', 'children'),
     prevent_initial_call=True
 )
-def add_bone_to_list(n_clicks, name, path, scale, children):
+def add_bone_to_list(n_clicks, path, scale, rotation, children):
     if n_clicks > 0:
+        name = None
+        for key, value in images_dict.items():
+            if (value == path):
+                name = key
+        if (name is None):
+            return no_update
+
         new_bone = {
             "name": name,
             "path": path,
-            "scale_factor": scale
+            "scale_factor": scale,
+            "rotation": rotation
         }
+        customize_config.append(new_bone)
         children.append(html.Div(f"{name}, {path}, {scale}"))
         return children
     return no_update
@@ -267,4 +308,5 @@ def quit_game(n_clicks):
     return no_update
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=8050, use_reloader=False, dev_tools_ui=False)
+    # app.run_server(debug=False, host="0.0.0.0", port=8050, use_reloader=False, dev_tools_ui=False)
+    app.run()
