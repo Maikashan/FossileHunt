@@ -27,15 +27,17 @@ PROJECTOR = find_projector_screen()
 
 WIDTH = 480  # PROJECTOR.width
 HEIGHT = 640  # PROJECTOR.height
+A = 0.97
 
 # Initialize fossil objects and bg images
 fossil1 = {"name": "human_bone", "path": "objects/bone.png", "scale_factor": 0.25}
 fossils = load_objects_texture([fossil1] * 10)
 BG_IMG, FG_IMG, Z_IMG = create_textures(fossils, sdbx_width=WIDTH, sdbx_height=HEIGHT)
+Z_IMG = A + (1 - A) * Z_IMG
 
 IID_RGB = 0
 IID_DPT = 0
-MAX_DEPTH = 1000  # Max depth in mm (adapt with the real depth)
+MAX_DEPTH = 630  # Max depth in mm (adapt with the real depth)
 running = True
 
 

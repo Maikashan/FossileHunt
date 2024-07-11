@@ -1,4 +1,5 @@
 import random
+from typing import Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -70,7 +71,7 @@ def overlay_transparent(bg: np.array, overlay: np.array, x: int, y: int) -> np.a
     return bg
 
 
-def load_objects_texture(fossils_dict: list[dict[str, str]]) -> list[Fossil]:
+def load_objects_texture(fossils_dict: List[Dict[str, str]]) -> List[Fossil]:
     """Load the objects texture from the objects folder
 
     Args
@@ -116,8 +117,8 @@ def load_objects_texture(fossils_dict: list[dict[str, str]]) -> list[Fossil]:
 
 
 def create_textures(
-    fossils: list[Fossil], sdbx_width: int, sdbx_height: int
-) -> tuple[np.array, np.array, np.array]:
+    fossils: List[Fossil], sdbx_width: int, sdbx_height: int
+) -> Tuple[np.array, np.array, np.array]:
     """
     Create the initial background, the texture background and the depth background
 
