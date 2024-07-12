@@ -155,7 +155,7 @@ def load_objects_texture(fossils_dict: List[Dict[str, str]]) -> List[Fossil]:
 
 def create_textures(
     fossils: List[Fossil], sdbx_width: int, sdbx_height: int
-) -> Tuple[np.array, np.array, np.array]:
+) -> Tuple[np.array, np.array, np.array, np.array]:
     """
     Create the initial background, the texture background and the depth background
 
@@ -176,8 +176,9 @@ def create_textures(
 
     init_bg = np.full((sdbx_height, sdbx_width, 3), 0, dtype=np.uint8)
     depth_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.float32)
+    id_bg = np.full((sdbx_height, sdbx_width), -1, dtype=int)
     texture_bg = init_bg.copy()
-    for f in fossils:
+    for i, f in enumerate(fossils):
         theight, twidth = f.texture.shape[:2]
         half_theight = theight // 2
         half_twidth = twidth // 2
@@ -215,6 +216,10 @@ def create_textures(
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
                 ] = f.depth
+                id_bg[
+                    y - half_theight : y + half_theight,
+                    x - half_twidth : x + half_twidth,
+                ] = np.where(f.texture[:, :, 3] == 0, -1, i)
                 break
             randomize_count += 1
 
@@ -222,4 +227,5 @@ def create_textures(
     init_bg = np.transpose(init_bg, (1, 0, 2))
     texture_bg = np.transpose(texture_bg, (1, 0, 2))
     depth_bg = np.transpose(depth_bg)
-    return init_bg, texture_bg, depth_bg
+    id_bg = np.transpose(id_bg)
+    return init_bg, texture_bg, depth_bg, id_bg

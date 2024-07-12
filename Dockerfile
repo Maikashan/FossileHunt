@@ -38,9 +38,10 @@ RUN git clone https://github.com/OpenKinect/libfreenect.git /usr/local/src/libfr
     cd /usr/local/src/libfreenect/wrappers/python && \
     python3 setup.py install
 
-WORKDIR /app
+WORKDIR /app/src
 
 COPY src /app/src
-COPY objects /app/objects
 
-CMD ["python3", "src/stream_reader.py"]
+EXPOSE 8050
+
+CMD ["python3", "front.py"]

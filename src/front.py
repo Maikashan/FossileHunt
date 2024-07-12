@@ -2,11 +2,9 @@ import datetime
 import json
 import os
 
-from dash import Dash, Input, Output, State, callback, dcc, html, no_update
-
-from game import Game
-
 from calibration import run_calibration
+from dash import Dash, Input, Output, State, callback, dcc, html, no_update
+from game import Game
 
 app = Dash(
     __name__,
@@ -179,6 +177,13 @@ app.layout = html.Div(
                 html.Div(
                     children=[], id="time-elapsed", style={"margin-bottom": "20px"}
                 ),
+                html.Div(
+                    children=[
+                        html.Button("Start Calibration", id="start-calibration-button"),
+                        html.Button("Stop Calibration", id="stop-calibration-button"),
+                    ],
+                    style={"display": "flex", "flex-direction": "rows"},
+                ),
                 html.Button("Finir la partie", id="quit-button"),
                 html.Div(children=0, id="timer", style={"display": "none"}),
             ],
@@ -260,6 +265,7 @@ def update_bone_fields(selected_bone_name):
     prevent_initial_call=True,
 )
 def add_bone_to_list(n_clicks, path, scale, rotation, children):
+    print("boneeeee list", children)
     if n_clicks > 0:
         name = None
         for key, value in images_dict.items():
