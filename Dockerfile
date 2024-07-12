@@ -42,4 +42,6 @@ WORKDIR /app/src
 
 COPY src /app/src
 
+EXPOSE 8050
+
 CMD ["python3", "front.py"]
