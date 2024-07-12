@@ -171,10 +171,10 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     children=[
-                        html.Button("Start Calibration", id='start-calibration-button'),
-                        html.Button("Stop Calibration", id='stop-calibration-button'),
+                        html.Button("Start Calibration", id="start-calibration-button"),
+                        html.Button("Stop Calibration", id="stop-calibration-button"),
                     ],
-                    style={'display': 'flex', 'flex-direction': 'rows'}
+                    style={"display": "flex", "flex-direction": "rows"},
                 ),
                 html.Button("Finir la partie", id="quit-button"),
                 html.Div(children=0, id="timer", style={"display": "none"}),
@@ -196,26 +196,27 @@ app.layout = html.Div(
 )
 
 
-
 @callback(
-    Output('dummy-output', 'id', allow_duplicate=True),
-    Input('start-calibration-button', 'n_clicks'),
-    prevent_initial_call=True
+    Output("dummy-output", "id", allow_duplicate=True),
+    Input("start-calibration-button", "n_clicks"),
+    prevent_initial_call=True,
 )
 def start_calibration(n_clicks):
     if n_clicks > 0:
-        print('here')
+        print("here")
     return no_update
 
+
 @callback(
-    Output('dummy-output', 'id', allow_duplicate=True),
-    Input('stop-calibration-button', 'n_clicks'),
-    prevent_initial_call=True
+    Output("dummy-output", "id", allow_duplicate=True),
+    Input("stop-calibration-button", "n_clicks"),
+    prevent_initial_call=True,
 )
 def stop_calibration(n_clicks):
     if n_clicks > 0:
-        print('here')
+        print("here")
     return no_update
+
 
 @callback(
     Output("bone-list", "children", allow_duplicate=True),
@@ -265,6 +266,7 @@ def update_bone_fields(selected_bone_name):
     prevent_initial_call=True,
 )
 def add_bone_to_list(n_clicks, path, scale, rotation, children):
+    print("boneeeee list", children)
     if n_clicks > 0:
         name = None
         for key, value in images_dict.items():
