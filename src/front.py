@@ -177,13 +177,6 @@ app.layout = html.Div(
                 html.Div(
                     children=[], id="time-elapsed", style={"margin-bottom": "20px"}
                 ),
-                html.Div(
-                    children=[
-                        html.Button("Start Calibration", id="start-calibration-button"),
-                        html.Button("Stop Calibration", id="stop-calibration-button"),
-                    ],
-                    style={"display": "flex", "flex-direction": "rows"},
-                ),
                 html.Button("Finir la partie", id="quit-button"),
                 html.Div(children=0, id="timer", style={"display": "none"}),
             ],

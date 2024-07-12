@@ -180,12 +180,16 @@ def create_textures(
     texture_bg = init_bg.copy()
     for i, f in enumerate(fossils):
         theight, twidth = f.texture.shape[:2]
-        half_theight = theight // 2
-        half_twidth = twidth // 2
+        half_theight = theight // 2 + theight % 2
+        half_twidth = twidth // 2 + twidth % 2
         min_y = half_theight
         max_y = sdbx_height - half_theight
         min_x = half_twidth
         max_x = sdbx_width - half_twidth
+        print("sH",sdbx_height)
+        print("sw",sdbx_width)
+        print("th",theight)
+        print("tw",twidth)
 
         randomize_count = 0
         while randomize_count < 10:
@@ -216,10 +220,13 @@ def create_textures(
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
                 ] = f.depth
+                print("y - half_theight", y - half_theight, "y - half_theight"  , y + half_theight)
+                print("x - half_theight", x - half_twidth, "x + half_theight"  , x + half_twidth)
+                print(f.texture.shape)
                 id_bg[
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
-                ] = np.where(f.texture[:, :, 3] == 0, -1, i)
+                ] = i
                 break
             randomize_count += 1
 
