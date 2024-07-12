@@ -186,11 +186,13 @@ def create_textures(
         max_y = sdbx_height - half_theight
         min_x = half_twidth
         max_x = sdbx_width - half_twidth
-        print("sH",sdbx_height)
-        print("sw",sdbx_width)
-        print("th",theight)
-        print("tw",twidth)
+        print("sH", sdbx_height)
+        print("sw", sdbx_width)
+        print("th", theight)
+        print("tw", twidth)
 
+        if max_x - min_x < theight or max_y - min_y < twidth:
+            continue
         randomize_count = 0
         while randomize_count < 10:
             y = random.randint(min_y, max_y)
@@ -220,8 +222,18 @@ def create_textures(
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
                 ] = f.depth
-                print("y - half_theight", y - half_theight, "y - half_theight"  , y + half_theight)
-                print("x - half_theight", x - half_twidth, "x + half_theight"  , x + half_twidth)
+                print(
+                    "y - half_theight",
+                    y - half_theight,
+                    "y - half_theight",
+                    y + half_theight,
+                )
+                print(
+                    "x - half_theight",
+                    x - half_twidth,
+                    "x + half_theight",
+                    x + half_twidth,
+                )
                 print(f.texture.shape)
                 id_bg[
                     y - half_theight : y + half_theight,
