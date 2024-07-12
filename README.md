@@ -8,11 +8,17 @@
 
 
 Ahmed Hassayoune        <ahmed.hassayoune@epita.fr>
+
 Diane Bellarbi Salah    <diane.bellarbi-salah@epita.fr>
+
 Esteban Dulaurans       <esteban.dulaurans@epita.fr>
+
 Etienne Reverchon       <etienne.reverchon@epita.fr>
+
 Kerian Allaire          <kerian.allaire@epita.fr>
+
 Nicolae Istratii        <nicolae.istratii@epita.fr>
+
 Valentine Tcheou        <valentine.tcheou@epita.fr>
 
 ### Contexte 
