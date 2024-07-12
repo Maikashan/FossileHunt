@@ -7,6 +7,7 @@ import numpy as np
 from screeninfo import get_monitors
 
 from init_ressources import create_textures, load_objects_texture
+from smooth_depthmap import remove_flickering
 
 _HEIGHT = 640
 _WIDTH = 480
@@ -95,6 +96,7 @@ class Game:
 
     def _depth_callback(self, dev, data, timestamp):
         depth_img = np.minimum(data, _MAX_DEPTH) / _MAX_DEPTH
+        depth_img = remove_flickering(depth_map=depth_img, kernel_size=11, alpha=0.5)
         mask_z = self.z_img <= depth_img
         new_image = np.zeros((_WIDTH, _HEIGHT, 3), dtype=np.uint8)
         new_image[mask_z] = self.fg_img[mask_z]
