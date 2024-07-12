@@ -8,7 +8,8 @@ from screeninfo import get_monitors
 
 from init_ressources import create_textures, load_objects_texture
 
-_H = None
+import calibration
+
 _HEIGHT = 640
 _WIDTH = 480
 _MAX_DEPTH = 630
@@ -49,6 +50,7 @@ class Game:
             sdbx_width=_WIDTH,
             sdbx_height=_HEIGHT,
         )
+
         self.z_img = _A + (1 - _A) * self.z_img
 
     def _init_ctx(self):
@@ -95,8 +97,8 @@ class Game:
         cv2.waitKey(int(1 / _FRAME_RATE * 1000))  # wait match fps
 
     def _depth_callback(self, dev, data, timestamp):
-        if _H != None:
-            data = cv2.warpPerspective(data, _H, (data.shape[1], data.shape[0]))
+        if calibration._H is not None:
+            data = cv2.warpPerspective(data, calibration._H, (data.shape[1], data.shape[0]))
         depth_img = np.minimum(data, _MAX_DEPTH) / _MAX_DEPTH
         mask_z = self.z_img <= depth_img
         new_image = np.zeros((_WIDTH, _HEIGHT, 3), dtype=np.uint8)
