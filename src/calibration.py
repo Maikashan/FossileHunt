@@ -17,8 +17,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-H = None
-App = None
+_H = None
 
 
 class QControl(QGraphicsRectItem):
@@ -86,23 +85,23 @@ class QCalibrationApp(QMainWindow):
         self.timer.start(30)  # Kinect frame rate
 
     def peek_frame(self):
-        frame = freenect.sync_get_video()[0]
-        depth_frame = freenect.sync_get_depth()[0]
+        frame = freenect.sync_get_video(0)[0]
+        depth_frame = freenect.sync_get_depth(0)[0]
 
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         depth_frame = depth_frame.astype(np.uint8)
 
         self.display_frame(frame, self.rgb_item, self.lscene)
-        if H is not None:
-            unwrapped = cv2.warpPerspective(frame, H, (frame.shape[1], frame.shape[0]))
+        if _H is not None:
+            unwrapped = cv2.warpPerspective(frame, _H, (frame.shape[1], frame.shape[0]))
             self.display_frame(unwrapped, self.unwrapped_item, self.cscene)
 
         depth_rgb = cv2.applyColorMap(
             cv2.convertScaleAbs(depth_frame, alpha=0.03), cv2.COLORMAP_JET
         )
-        if H is not None:
+        if _H is not None:
             depth_rgb = cv2.warpPerspective(
-                depth_rgb, H, (depth_rgb.shape[1], depth_rgb.shape[0])
+                depth_rgb, _H, (depth_rgb.shape[1], depth_rgb.shape[0])
             )
         self.display_frame(depth_rgb, self.depth_item, self.rscene)
 
@@ -127,15 +126,17 @@ class QCalibrationApp(QMainWindow):
             coordinates = [(0, 0), (640, 0), (640, 480), (0, 480)]
         src_pts = np.array(coordinates, dtype=np.float32)
         dst_pts = np.array([(0, 0), (640, 0), (640, 480), (0, 480)], dtype=np.float32)
-        H = cv2.getPerspectiveTransform(src_pts, dst_pts)
+        global _H
+        _H = cv2.getPerspectiveTransform(src_pts, dst_pts)
+
+    def closeEvent(self, a0) -> None:
+        freenect.sync_stop()
+        a0.accept()
 
 
 def run_calibration():
+    freenect.sync_stop()
     App = QApplication(sys.argv)
     win = QCalibrationApp()
     win.show()
     App.exec()
-
-
-def end_calibration():
-    App.quit()

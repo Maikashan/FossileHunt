@@ -36,6 +36,7 @@ _FRAME_RATE = 60
 
 class Game:
     def __init__(self, fossils_dict):
+        freenect.sync_stop()
         self.running = False
         self._init_ctx()
         self._init_ressources(fossils_dict)

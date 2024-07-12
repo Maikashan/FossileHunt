@@ -6,7 +6,7 @@ from dash import Dash, Input, Output, State, callback, dcc, html, no_update
 
 from game import Game
 
-from calibration import end_calibration, run_calibration
+from calibration import run_calibration
 
 app = Dash(
     __name__,
@@ -156,9 +156,15 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                html.Button("Start Calibration", id='start-calibration-button', n_clicks=0),
-                html.Button("Stop Calibration", id='stop-calibration-button', n_clicks=0, style={'display': 'none'}),
-                html.Button("Commemcer le jeu", id="start-button", n_clicks=0, style={'display': 'none'}),
+                html.Button(
+                    "Start Calibration", id="start-calibration-button", n_clicks=0
+                ),
+                html.Button(
+                    "Commemcer le jeu",
+                    id="start-button",
+                    n_clicks=0,
+                    style={"display": "none"},
+                ),
             ],
         ),
         html.Div(
@@ -192,29 +198,17 @@ app.layout = html.Div(
     },
 )
 
+
 @callback(
-    Output("start-calibration-button", component_property='style'),
-    Output("stop-calibration-button", component_property='style', allow_duplicate=True),
+    Output("start-calibration-button", component_property="style"),
+    Output("start-button", component_property="style"),
     Input("start-calibration-button", "n_clicks"),
     prevent_initial_call=True,
 )
 def start_calibration(n_clicks):
     if n_clicks > 0:
         run_calibration()
-        return {'display': 'none'}, {'display': 'block'}
-    return no_update
-
-
-@callback(
-    Output("stop-calibration-button", component_property='style', allow_duplicate=True),
-    Output("start-button", component_property='style'),
-    Input("stop-calibration-button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def stop_calibration(n_clicks):
-    if n_clicks > 0:
-        end_calibration()
-        return {'display': 'none'}, {'display': 'block'}
+        return {"display": "none"}, {"display": "block"}
     return no_update
 
 
@@ -332,7 +326,6 @@ def start_game(n_clicks, model):
         for key, value in model_dict.items():
             print(key)
             if key == model:
-                print("ok")
                 config_path = value
                 break
         if config_path is None:
