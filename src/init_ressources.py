@@ -176,9 +176,9 @@ def create_textures(
 
     init_bg = np.full((sdbx_height, sdbx_width, 3), 0, dtype=np.uint8)
     depth_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.float32)
-    id_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.uint8)
+    id_bg = np.full((sdbx_height, sdbx_width), -1, dtype=int)
     texture_bg = init_bg.copy()
-    for i,f in enumerate(fossils):
+    for i, f in enumerate(fossils):
         theight, twidth = f.texture.shape[:2]
         half_theight = theight // 2
         half_twidth = twidth // 2
@@ -227,4 +227,5 @@ def create_textures(
     init_bg = np.transpose(init_bg, (1, 0, 2))
     texture_bg = np.transpose(texture_bg, (1, 0, 2))
     depth_bg = np.transpose(depth_bg)
+    id_bg = np.transpose(id_bg)
     return init_bg, texture_bg, depth_bg, id_bg

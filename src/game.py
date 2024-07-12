@@ -99,20 +99,37 @@ class Game:
         new_image[mask_z] = self.fg_img[mask_z]
         new_image[~mask_z] = self.bg_img[~mask_z]
 
-        curr = new_image[:,:,0]
-        uni_curr, count_curr = (np.unique(self.id_img[np.where(curr>=255,False,True)],return_counts=True))
-        uni_id, count_id = (np.unique(self.id_img, return_counts=True))
-        dict_id = dict(zip(uni_id, count_id))
+        bones_mask = self.id_img != -1
+        bones_curr_mask = (
+            (new_image[:, :, 0] != 0)
+            & (new_image[:, :, 1] != 0)
+            & (new_image[:, :, 2] != 0)
+        )
 
-        dict_curr = dict(zip(uni_curr,count_curr))
+        curr = new_image[:, :, 0]
+        uni_curr, count_curr = np.unique(
+            self.id_img[bones_curr_mask], return_counts=True
+        )
+        print(uni_curr, count_curr)
+        uni_id, count_id = np.unique(self.id_img, return_counts=True)
 
         os = []
-        for x in dict_id:
-            if (x in dict_curr):
-                if (dict_curr[x]*100/dict_id[x]>80):
-                    os.append(x)
-            
-        print(os) 
+        for x, cnt in zip(uni_curr, count_curr):
+            p = cnt / np.sum(self.id_img == x)
+            print(x, cnt, np.sum(self.id_img == x), p)
+            if p > 0.8:
+                os.append(x)
+
+        # dict_id = dict(zip(uni_id, count_id))
+
+        # dict_curr = dict(zip(uni_curr, count_curr))
+
+        # for x in dict_id:
+        #     if x in dict_curr:
+        #         if dict_curr[x] * 100 / dict_id[x] > 80:
+        #             os.append(x)
+
+        print(os)
 
         self._display(new_image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
