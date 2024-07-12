@@ -203,7 +203,9 @@ app.layout = html.Div(
     prevent_initial_call=True
 )
 def start_calibration(n_clicks):
-    pass
+    if n_clicks > 0:
+        print('here')
+    return no_update
 
 @callback(
     Output('dummy-output', 'id', allow_duplicate=True),
@@ -211,7 +213,9 @@ def start_calibration(n_clicks):
     prevent_initial_call=True
 )
 def stop_calibration(n_clicks):
-    pass
+    if n_clicks > 0:
+        print('here')
+    return no_update
 
 @callback(
     Output("bone-list", "children", allow_duplicate=True),
