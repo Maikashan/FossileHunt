@@ -42,7 +42,7 @@ class Game:
         self._init_callback()
 
     def _init_ressources(self, fossils_dict):
-        self.bg_img, self.fg_img, self.z_img = create_textures(
+        self.bg_img, self.fg_img, self.z_img, self.id_img = create_textures(
             load_objects_texture(fossils_dict),
             sdbx_width=_WIDTH,
             sdbx_height=_HEIGHT,
@@ -98,6 +98,10 @@ class Game:
         new_image = np.zeros((_WIDTH, _HEIGHT, 3), dtype=np.uint8)
         new_image[mask_z] = self.fg_img[mask_z]
         new_image[~mask_z] = self.bg_img[~mask_z]
+
+        curr = new_image[:,:,0]
+        print(np.unique(self.id_img[np.where(curr>=255,False,True)]))
+
         self._display(new_image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             self.running = False
