@@ -25,6 +25,8 @@ RUN apt-get update && \
 
 COPY requirements.txt /app/requirements.txt
 
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install PyQt6==6.7.0 --only-binary :all:
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 RUN git clone https://github.com/OpenKinect/libfreenect.git /usr/local/src/libfreenect && \
