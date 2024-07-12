@@ -100,7 +100,19 @@ class Game:
         new_image[~mask_z] = self.bg_img[~mask_z]
 
         curr = new_image[:,:,0]
-        print(np.unique(self.id_img[np.where(curr>=255,False,True)]))
+        uni_curr, count_curr = (np.unique(self.id_img[np.where(curr>=255,False,True)],return_counts=True))
+        uni_id, count_id = (np.unique(self.id_img, return_counts=True))
+        dict_id = dict(zip(uni_id, count_id))
+
+        dict_curr = dict(zip(uni_curr,count_curr))
+
+        os = []
+        for x in dict_id:
+            if (x in dict_curr):
+                if (dict_curr[x]*100/dict_id[x]>80):
+                    os.append(x)
+            
+        print(os) 
 
         self._display(new_image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
