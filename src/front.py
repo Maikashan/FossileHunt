@@ -196,6 +196,23 @@ app.layout = html.Div(
 )
 
 
+
+@callback(
+    Output('dummy-output', 'id', allow_duplicate=True),
+    Input('start-calibration-button', 'n_clicks'),
+    prevent_initial_call=True
+)
+def start_calibration(n_clicks):
+    pass
+
+@callback(
+    Output('dummy-output', 'id', allow_duplicate=True),
+    Input('stop-calibration-button', 'n_clicks'),
+    prevent_initial_call=True
+)
+def stop_calibration(n_clicks):
+    pass
+
 @callback(
     Output("bone-list", "children", allow_duplicate=True),
     Input("reset-bone-button", "n_clicks"),
