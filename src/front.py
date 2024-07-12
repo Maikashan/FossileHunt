@@ -2,8 +2,9 @@ import datetime
 import json
 import os
 
-from calibration import run_calibration
 from dash import Dash, Input, Output, State, callback, dcc, html, no_update
+
+from calibration import run_calibration
 from game import Game
 
 app = Dash(
@@ -19,6 +20,8 @@ customize_config = []
 model_dict = {
     "test": "assets/configs/test/config.json",
     "tribolites": "assets/configs/trilobites/config.json",
+    "camarosaurs-lentus": "assets/configs/camarosaurs-lentus/config.json",
+    "allosaurus": "assets/configs/allosaurus/config.json",
     "custom": "assets/configs/custom/config.json",
 }
 images_dict = {
@@ -50,7 +53,16 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     dcc.Dropdown(
-                        ["test", "custom"], "test", id="model-dropdown", clearable=False
+                        [
+                            "test",
+                            "allosaurus",
+                            "camarosaurs-lentus",
+                            "trilobites",
+                            "custom",
+                        ],
+                        "test",
+                        id="model-dropdown",
+                        clearable=False,
                     ),
                     style={"margin-bottom": "20px"},
                 ),
@@ -293,14 +305,12 @@ def submit_bone_list(n_clicks, bones):
         bone_data = []
         for i in range(len(bones)):
             split = bones[i]["props"]["children"].split(", ")
-            bone_data.append(
-                {
-                    "name": split[0],
-                    "path": split[1],
-                    "scale_factor": float(split[2]),
-                    "rotation": int(split[3]),
-                }
-            )
+            bone_data.append({
+                "name": split[0],
+                "path": split[1],
+                "scale_factor": float(split[2]),
+                "rotation": int(split[3]),
+            })
         f = open("assets/configs/custom/config.json", "w")
         f.write(json.dumps(bone_data))
         f.close()
