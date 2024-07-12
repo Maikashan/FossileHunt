@@ -19,6 +19,8 @@ customize_config = []
 model_dict = {
     "test": "assets/configs/test/config.json",
     "tribolites": "assets/configs/trilobites/config.json",
+    "camarosaurs-lentus": "assets/configs/camarosaurs-lentus/config.json",
+    "allosaurus": "assets/configs/allosaurus/config.json",
     "custom": "assets/configs/custom/config.json",
 }
 images_dict = {
@@ -50,7 +52,7 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     dcc.Dropdown(
-                        ["test", "custom"], "test", id="model-dropdown", clearable=False
+                        ["test", "allosaurus", "camarosaurs-lentus", "trilobites", "custom"], "test", id="model-dropdown", clearable=False
                     ),
                     style={"margin-bottom": "20px"},
                 ),
