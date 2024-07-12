@@ -219,7 +219,7 @@ def create_textures(
                 id_bg[
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
-                ] = i
+                ] = np.where(f.texture[:, :, 3] == 0, -1, i)
                 break
             randomize_count += 1
 

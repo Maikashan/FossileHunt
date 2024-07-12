@@ -36,6 +36,7 @@ _FRAME_RATE = 60
 class Game:
     def __init__(self, fossils_dict):
         self.running = False
+        self.seen_bones = 0
         self._init_ctx()
         self._init_ressources(fossils_dict)
         # self._init_handlers()
@@ -110,26 +111,13 @@ class Game:
         uni_curr, count_curr = np.unique(
             self.id_img[bones_curr_mask], return_counts=True
         )
-        print(uni_curr, count_curr)
         uni_id, count_id = np.unique(self.id_img, return_counts=True)
 
-        os = []
+        self.seen_bones = 0
         for x, cnt in zip(uni_curr, count_curr):
             p = cnt / np.sum(self.id_img == x)
-            print(x, cnt, np.sum(self.id_img == x), p)
             if p > 0.8:
-                os.append(x)
-
-        # dict_id = dict(zip(uni_id, count_id))
-
-        # dict_curr = dict(zip(uni_curr, count_curr))
-
-        # for x in dict_id:
-        #     if x in dict_curr:
-        #         if dict_curr[x] * 100 / dict_id[x] > 80:
-        #             os.append(x)
-
-        print(os)
+                self.seen_bones += 1
 
         self._display(new_image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
