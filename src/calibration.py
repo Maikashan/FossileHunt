@@ -3,7 +3,7 @@ import sys
 import cv2
 import freenect
 import numpy as np
-from PyQt6.QtCore import QPointF, QRectF, Qt, QTimer
+from PyQt6.QtCore import QRectF, Qt, QTimer
 from PyQt6.QtGui import QBrush, QImage, QPixmap
 from PyQt6.QtWidgets import (
     QApplication,
@@ -14,9 +14,10 @@ from PyQt6.QtWidgets import (
     QGraphicsView,
     QHBoxLayout,
     QMainWindow,
-    QVBoxLayout,
     QWidget,
 )
+
+H = None
 
 
 class QControl(QGraphicsRectItem):
@@ -79,8 +80,6 @@ class QCalibrationApp(QMainWindow):
         layout.addWidget(self.rview)
         self.setCentralWidget(central)
 
-        self.H = None
-
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.peek_frame)
         self.timer.start(30)  # Kinect frame rate
@@ -93,18 +92,16 @@ class QCalibrationApp(QMainWindow):
         depth_frame = depth_frame.astype(np.uint8)
 
         self.display_frame(frame, self.rgb_item, self.lscene)
-        if self.H is not None:
-            unwrapped = cv2.warpPerspective(
-                frame, self.H, (frame.shape[1], frame.shape[0])
-            )
+        if H is not None:
+            unwrapped = cv2.warpPerspective(frame, H, (frame.shape[1], frame.shape[0]))
             self.display_frame(unwrapped, self.unwrapped_item, self.cscene)
 
         depth_rgb = cv2.applyColorMap(
             cv2.convertScaleAbs(depth_frame, alpha=0.03), cv2.COLORMAP_JET
         )
-        if self.H is not None:
+        if H is not None:
             depth_rgb = cv2.warpPerspective(
-                depth_rgb, self.H, (depth_rgb.shape[1], depth_rgb.shape[0])
+                depth_rgb, H, (depth_rgb.shape[1], depth_rgb.shape[0])
             )
         self.display_frame(depth_rgb, self.depth_item, self.rscene)
 
@@ -129,10 +126,10 @@ class QCalibrationApp(QMainWindow):
             coordinates = [(0, 0), (640, 0), (640, 480), (0, 480)]
         src_pts = np.array(coordinates, dtype=np.float32)
         dst_pts = np.array([(0, 0), (640, 0), (640, 480), (0, 480)], dtype=np.float32)
-        self.H = cv2.getPerspectiveTransform(src_pts, dst_pts)
+        H = cv2.getPerspectiveTransform(src_pts, dst_pts)
 
 
-if __name__ == "__main__":
+def run_calibration():
     app = QApplication(sys.argv)
     win = QCalibrationApp()
     win.show()

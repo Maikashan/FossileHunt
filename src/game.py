@@ -8,6 +8,7 @@ from screeninfo import get_monitors
 
 from init_ressources import create_textures, load_objects_texture
 
+_H = None
 _HEIGHT = 640
 _WIDTH = 480
 _MAX_DEPTH = 630
@@ -93,6 +94,8 @@ class Game:
         cv2.waitKey(int(1 / _FRAME_RATE * 1000))  # wait match fps
 
     def _depth_callback(self, dev, data, timestamp):
+        if _H != None:
+            data = cv2.warpPerspective(data, _H, (data.shape[1], data.shape[0]))
         depth_img = np.minimum(data, _MAX_DEPTH) / _MAX_DEPTH
         mask_z = self.z_img <= depth_img
         new_image = np.zeros((_WIDTH, _HEIGHT, 3), dtype=np.uint8)
