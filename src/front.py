@@ -135,7 +135,6 @@ app.layout = html.Div(
                                         html.Div(
                                             id="bone-list",
                                             children=[],
-                                            style={"display": "none"},
                                         ),
                                         html.Button(
                                             "Reset config",
