@@ -60,7 +60,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(
                             children=[
-                                html.H4("Customize Bones"),
+                                html.H4("Customiser Bones"),
                                 html.Div(
                                     children=[
                                         html.Div(
@@ -128,7 +128,9 @@ app.layout = html.Div(
                                             },
                                         ),
                                         html.Button(
-                                            "Add Bone", id="add-bone-button", n_clicks=0
+                                            "Ajouter un os",
+                                            id="add-bone-button",
+                                            n_clicks=0,
                                         ),
                                         html.Div(
                                             id="bone-list",
@@ -136,7 +138,7 @@ app.layout = html.Div(
                                             style={"display": "none"},
                                         ),
                                         html.Button(
-                                            "Reset config",
+                                            "Recommencer la config",
                                             id="reset-bone-button",
                                             n_clicks=0,
                                         ),
@@ -155,10 +157,12 @@ app.layout = html.Div(
                     ],
                 ),
                 html.Button(
-                    "Start Calibration", id="start-calibration-button", n_clicks=0
+                    "Commencer la calibration",
+                    id="start-calibration-button",
+                    n_clicks=0,
                 ),
                 html.Button(
-                    "Commemcer le jeu",
+                    "Commencer le jeu",
                     id="start-button",
                     n_clicks=0,
                     style={"display": "none"},
