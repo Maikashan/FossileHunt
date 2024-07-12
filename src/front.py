@@ -6,6 +6,8 @@ from dash import Dash, Input, Output, State, callback, dcc, html, no_update
 
 from game import Game
 
+from calibration import end_calibration, run_calibration
+
 app = Dash(
     __name__,
     external_stylesheets=["assets/style.css"],
@@ -190,6 +192,28 @@ app.layout = html.Div(
 
 
 @callback(
+    Output("dummy-output", "id", allow_duplicate=True),
+    Input("start-calibration-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def start_calibration(n_clicks):
+    if n_clicks > 0:
+        run_calibration()
+    return no_update
+
+
+@callback(
+    Output("dummy-output", "id", allow_duplicate=True),
+    Input("stop-calibration-button", "n_clicks"),
+    prevent_initial_call=True,
+)
+def stop_calibration(n_clicks):
+    if n_clicks > 0:
+        end_calibration()
+    return no_update
+
+
+@callback(
     Output("bone-list", "children", allow_duplicate=True),
     Input("reset-bone-button", "n_clicks"),
     prevent_initial_call=True,
@@ -271,12 +295,14 @@ def submit_bone_list(n_clicks, bones):
         bone_data = []
         for i in range(len(bones)):
             split = bones[i]["props"]["children"].split(", ")
-            bone_data.append({
-                "name": split[0],
-                "path": split[1],
-                "scale_factor": float(split[2]),
-                "rotation": int(split[3]),
-            })
+            bone_data.append(
+                {
+                    "name": split[0],
+                    "path": split[1],
+                    "scale_factor": float(split[2]),
+                    "rotation": int(split[3]),
+                }
+            )
         f = open("assets/configs/custom/config.json", "w")
         f.write(json.dumps(bone_data))
         f.close()

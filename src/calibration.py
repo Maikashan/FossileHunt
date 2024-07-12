@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 )
 
 H = None
+App = None
 
 
 class QControl(QGraphicsRectItem):
@@ -130,7 +131,11 @@ class QCalibrationApp(QMainWindow):
 
 
 def run_calibration():
-    app = QApplication(sys.argv)
+    App = QApplication(sys.argv)
     win = QCalibrationApp()
     win.show()
-    sys.exit(app.exec())
+    App.exec()
+
+
+def end_calibration():
+    App.quit()
