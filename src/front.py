@@ -166,6 +166,7 @@ app.layout = html.Div(
                     n_intervals=0,
                 ),
                 html.Div(children=[], id="model-name", style={"margin-bottom": "5px"}),
+                html.Div(children=['Nombre d\'os trouve : 0'], id="bone-counter", style={"margin-bottom": "5px"}),
                 html.Div(
                     children=[], id="time-elapsed", style={"margin-bottom": "20px"}
                 ),
@@ -318,6 +319,7 @@ def submit_bone_list(n_clicks, bones):
     Output("content-start", component_property="style", allow_duplicate=True),
     Output("content-game", component_property="style", allow_duplicate=True),
     Output("model-name", "children"),
+    Output("bone-counter", "children", allow_duplicate=True),
     Output("time-elapsed", "children", allow_duplicate=True),
     Output("timer", "children", allow_duplicate=True),
     Input("start-button", "n_clicks"),
@@ -351,6 +353,7 @@ def start_game(n_clicks, model):
             {"display": "none"},
             {"display": "block"},
             f"Modèle : {model}",
+            f"Nombre d\'os trouve : {game.seen_bones}/{game.nb_total_bones}",
             "Temps écoulé : 0:00:00",
             0,
         )
@@ -358,6 +361,7 @@ def start_game(n_clicks, model):
 
 
 @callback(
+    Output("bone-counter", "children", allow_duplicate=True),
     Output("time-elapsed", "children", allow_duplicate=True),
     Output("timer", "children", allow_duplicate=True),
     Input("interval-component", "n_intervals"),
@@ -367,7 +371,8 @@ def start_game(n_clicks, model):
 def update_time_elapsed(n_intervals, timer):
     if n_intervals:
         timer += 1
-        return f"Temps écoulé : {datetime.timedelta(seconds=timer)}", timer
+        global game
+        return f"Nombre d\'os trouve : {game.seen_bones}/{game.nb_total_bones}", f"Temps écoulé : {datetime.timedelta(seconds=timer)}", timer
     return no_update
 
 
@@ -379,9 +384,6 @@ def update_time_elapsed(n_intervals, timer):
 )
 def quit_game(n_clicks):
     if n_clicks > 0:
-        # global game
-        # game.destroy()
-        # game = None
         return {"display": "none"}, {"display": "block"}
     return no_update
 

@@ -172,8 +172,11 @@ def create_textures(
     -------
     tuple[np.array, np.array, np.array]
         the initial background, the texture background and the depth background
+    int
+        the number of bones in the texture
     """
 
+    count_bones = 0
     init_bg = np.full((sdbx_height, sdbx_width, 3), 0, dtype=np.uint8)
     depth_bg = np.full((sdbx_height, sdbx_width), -1, dtype=np.float32)
     id_bg = np.full((sdbx_height, sdbx_width), -1, dtype=int)
@@ -220,6 +223,7 @@ def create_textures(
                     y - half_theight : y + half_theight,
                     x - half_twidth : x + half_twidth,
                 ] = np.where(f.texture[:, :, 3] == 0, -1, i)
+                count_bones += 1
                 break
             randomize_count += 1
 
@@ -228,4 +232,4 @@ def create_textures(
     texture_bg = np.transpose(texture_bg, (1, 0, 2))
     depth_bg = np.transpose(depth_bg)
     id_bg = np.transpose(id_bg)
-    return init_bg, texture_bg, depth_bg, id_bg
+    return init_bg, texture_bg, depth_bg, id_bg, count_bones

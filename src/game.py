@@ -43,7 +43,7 @@ class Game:
         self._init_callback()
 
     def _init_ressources(self, fossils_dict):
-        self.bg_img, self.fg_img, self.z_img, self.id_img = create_textures(
+        self.bg_img, self.fg_img, self.z_img, self.id_img, self.nb_total_bones = create_textures(
             load_objects_texture(fossils_dict),
             sdbx_width=_WIDTH,
             sdbx_height=_HEIGHT,
