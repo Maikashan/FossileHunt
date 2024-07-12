@@ -9,6 +9,8 @@ from screeninfo import get_monitors
 from init_ressources import create_textures, load_objects_texture
 from smooth_depthmap import remove_flickering
 
+import calibration
+
 _HEIGHT = 640
 _WIDTH = 480
 _MAX_DEPTH = 630
@@ -36,6 +38,7 @@ _FRAME_RATE = 60
 
 class Game:
     def __init__(self, fossils_dict):
+        freenect.sync_stop()
         self.running = False
         self.seen_bones = 0
         self._init_ctx()
@@ -49,6 +52,7 @@ class Game:
             sdbx_width=_WIDTH,
             sdbx_height=_HEIGHT,
         )
+
         self.z_img = _A + (1 - _A) * self.z_img
 
     def _init_ctx(self):
@@ -95,6 +99,8 @@ class Game:
         cv2.waitKey(int(1 / _FRAME_RATE * 1000))  # wait match fps
 
     def _depth_callback(self, dev, data, timestamp):
+        if calibration._H is not None:
+            data = cv2.warpPerspective(data, calibration._H, (data.shape[1], data.shape[0]))
         depth_img = np.minimum(data, _MAX_DEPTH) / _MAX_DEPTH
         depth_img = remove_flickering(depth_map=depth_img, kernel_size=11, alpha=0.5)
         mask_z = self.z_img <= depth_img

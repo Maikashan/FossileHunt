@@ -2,8 +2,8 @@ import datetime
 import json
 import os
 
+from calibration import run_calibration
 from dash import Dash, Input, Output, State, callback, dcc, html, no_update
-
 from game import Game
 
 app = Dash(
@@ -154,7 +154,15 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                html.Button("Commemcer le jeu", id="start-button", n_clicks=0),
+                html.Button(
+                    "Start Calibration", id="start-calibration-button", n_clicks=0
+                ),
+                html.Button(
+                    "Commemcer le jeu",
+                    id="start-button",
+                    n_clicks=0,
+                    style={"display": "none"},
+                ),
             ],
         ),
         html.Div(
@@ -168,13 +176,6 @@ app.layout = html.Div(
                 html.Div(children=[], id="model-name", style={"margin-bottom": "5px"}),
                 html.Div(
                     children=[], id="time-elapsed", style={"margin-bottom": "20px"}
-                ),
-                html.Div(
-                    children=[
-                        html.Button("Start Calibration", id="start-calibration-button"),
-                        html.Button("Stop Calibration", id="stop-calibration-button"),
-                    ],
-                    style={"display": "flex", "flex-direction": "rows"},
                 ),
                 html.Button("Finir la partie", id="quit-button"),
                 html.Div(children=0, id="timer", style={"display": "none"}),
@@ -197,24 +198,15 @@ app.layout = html.Div(
 
 
 @callback(
-    Output("dummy-output", "id", allow_duplicate=True),
+    Output("start-calibration-button", component_property="style"),
+    Output("start-button", component_property="style"),
     Input("start-calibration-button", "n_clicks"),
     prevent_initial_call=True,
 )
 def start_calibration(n_clicks):
     if n_clicks > 0:
-        print("here")
-    return no_update
-
-
-@callback(
-    Output("dummy-output", "id", allow_duplicate=True),
-    Input("stop-calibration-button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def stop_calibration(n_clicks):
-    if n_clicks > 0:
-        print("here")
+        run_calibration()
+        return {"display": "none"}, {"display": "block"}
     return no_update
 
 
@@ -301,12 +293,14 @@ def submit_bone_list(n_clicks, bones):
         bone_data = []
         for i in range(len(bones)):
             split = bones[i]["props"]["children"].split(", ")
-            bone_data.append({
-                "name": split[0],
-                "path": split[1],
-                "scale_factor": float(split[2]),
-                "rotation": int(split[3]),
-            })
+            bone_data.append(
+                {
+                    "name": split[0],
+                    "path": split[1],
+                    "scale_factor": float(split[2]),
+                    "rotation": int(split[3]),
+                }
+            )
         f = open("assets/configs/custom/config.json", "w")
         f.write(json.dumps(bone_data))
         f.close()
@@ -331,7 +325,6 @@ def start_game(n_clicks, model):
         for key, value in model_dict.items():
             print(key)
             if key == model:
-                print("ok")
                 config_path = value
                 break
         if config_path is None:
