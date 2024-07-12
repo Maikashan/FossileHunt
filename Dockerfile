@@ -41,7 +41,7 @@ RUN git clone https://github.com/OpenKinect/libfreenect.git /usr/local/src/libfr
 WORKDIR /app/src
 
 COPY src /app/src
-COPY objects /app/objects
 
 EXPOSE 8050
+
 CMD ["python3", "front.py"]

@@ -36,13 +36,14 @@ _FRAME_RATE = 60
 class Game:
     def __init__(self, fossils_dict):
         self.running = False
+        self.seen_bones = 0
         self._init_ctx()
         self._init_ressources(fossils_dict)
         # self._init_handlers()
         self._init_callback()
 
     def _init_ressources(self, fossils_dict):
-        self.bg_img, self.fg_img, self.z_img = create_textures(
+        self.bg_img, self.fg_img, self.z_img, self.id_img = create_textures(
             load_objects_texture(fossils_dict),
             sdbx_width=_WIDTH,
             sdbx_height=_HEIGHT,
@@ -98,6 +99,26 @@ class Game:
         new_image = np.zeros((_WIDTH, _HEIGHT, 3), dtype=np.uint8)
         new_image[mask_z] = self.fg_img[mask_z]
         new_image[~mask_z] = self.bg_img[~mask_z]
+
+        bones_mask = self.id_img != -1
+        bones_curr_mask = (
+            (new_image[:, :, 0] != 0)
+            & (new_image[:, :, 1] != 0)
+            & (new_image[:, :, 2] != 0)
+        )
+
+        curr = new_image[:, :, 0]
+        uni_curr, count_curr = np.unique(
+            self.id_img[bones_curr_mask], return_counts=True
+        )
+        uni_id, count_id = np.unique(self.id_img, return_counts=True)
+
+        self.seen_bones = 0
+        for x, cnt in zip(uni_curr, count_curr):
+            p = cnt / np.sum(self.id_img == x)
+            if p > 0.8:
+                self.seen_bones += 1
+
         self._display(new_image)
         if cv2.waitKey(1) & 0xFF == ord("q"):
             self.running = False
