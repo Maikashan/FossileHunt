@@ -4,9 +4,9 @@ import os
 
 from dash import Dash, Input, Output, State, callback, dcc, html, no_update
 
-from game import Game
+# from game import Game
 
-from calibration import end_calibration, run_calibration
+# from calibration import end_calibration, run_calibration
 
 app = Dash(
     __name__,
@@ -16,7 +16,7 @@ app = Dash(
     prevent_initial_callbacks=True,
 )
 server = app.server
-game = None
+# game = None
 customize_config = []
 model_dict = {
     "test": "assets/configs/test/config.json",
@@ -156,7 +156,9 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                html.Button("Commemcer le jeu", id="start-button", n_clicks=0),
+                html.Button("Start Calibration", id='start-calibration-button', n_clicks=0),
+                html.Button("Stop Calibration", id='stop-calibration-button', n_clicks=0, style={'display': 'none'}),
+                html.Button("Commemcer le jeu", id="start-button", n_clicks=0, style={'display': 'none'}),
             ],
         ),
         html.Div(
@@ -190,26 +192,31 @@ app.layout = html.Div(
     },
 )
 
-
 @callback(
-    Output("dummy-output", "id", allow_duplicate=True),
+    Output("start-calibration-button", component_property='style'),
+    Output("stop-calibration-button", component_property='style', allow_duplicate=True),
     Input("start-calibration-button", "n_clicks"),
     prevent_initial_call=True,
 )
 def start_calibration(n_clicks):
     if n_clicks > 0:
-        run_calibration()
+        # run_calibration()
+        print('start calibration')
+        return {'display': 'none'}, {'display': 'block'}
     return no_update
 
 
 @callback(
-    Output("dummy-output", "id", allow_duplicate=True),
+    Output("stop-calibration-button", component_property='style', allow_duplicate=True),
+    Output("start-button", component_property='style'),
     Input("stop-calibration-button", "n_clicks"),
     prevent_initial_call=True,
 )
 def stop_calibration(n_clicks):
     if n_clicks > 0:
-        end_calibration()
+        # end_calibration()
+        print('end calibration')
+        return {'display': 'none'}, {'display': 'block'}
     return no_update
 
 
@@ -335,14 +342,14 @@ def start_game(n_clicks, model):
 
         with open(config_path, "r") as f:
             fossils_dict = json.load(f)
-
-        global game
-        if game is not None:
-            game._init_ressources(fossils_dict)
-        else:
-            game = Game(fossils_dict)
-            game.start()
-            game.run()
+        #
+        # global game
+        # if game is not None:
+        #     game._init_ressources(fossils_dict)
+        # else:
+        #     game = Game(fossils_dict)
+        #     game.start()
+        #     game.run()
         return (
             {"display": "none"},
             {"display": "block"},
