@@ -186,6 +186,9 @@ def create_textures(
         min_x = half_twidth
         max_x = sdbx_width - half_twidth
 
+        if (max_x - min_x < theight or max_y - min_y < twidth):
+            continue
+
         randomize_count = 0
         while randomize_count < 10:
             y = random.randint(min_y, max_y)
